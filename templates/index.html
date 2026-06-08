@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Phishing URL Detector</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        margin: 0;
+        padding: 0;
+        color: white;
+        text-align: center;
+    }
+
+    .container {
+        margin-top: 80px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    .box {
+        background: white;
+        color: black;
+        width: 50%;
+        margin: auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 10px 25px rgba(0,0,0,0.3);
+        margin-top: 30px;
+    }
+
+    input {
+        width: 80%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        background: #2a5298;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #1e3c72;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .safe {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .phishing {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    ul {
+        text-align: left;
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🔍 Phishing URL Detector</h1>
+    <p>Enter a URL to check whether it is safe or malicious</p>
+
+    <div class="box">
+        <form method="POST">
+            <input type="text" name="url" placeholder="Enter URL (https://...)" required>
+            <br>
+            <button type="submit">Check URL</button>
+        </form>
+
+        {% if result %}
+            <div class="result 
+                {% if 'Phishing' in result %}phishing{% else %}safe{% endif %}">
+                {{ result }}
+            </div>
+        {% endif %}
+
+        {% if reasons %}
+            <ul>
+                {% for r in reasons %}
+                    <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
