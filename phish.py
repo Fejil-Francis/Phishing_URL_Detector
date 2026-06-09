@@ -1,53 +1,53 @@
 from flask import Flask, render_template, request
-import requests
 from urllib.parse import urlparse
 import re
 
 app = Flask(__name__)
 
 keywords = [
-    'account','login','verify','bank','secure','update','password',
-    'confirm','alert','suspended','wallet','urgent','credit'
+    'account', 'login', 'verify', 'bank', 'secure', 'update',
+    'password', 'confirm', 'alert', 'suspended', 'wallet',
+    'urgent', 'credit','@'
 ]
 
+
 def check_url(url):
-    score = 0
     reasons = []
 
-    # length check
+    # Split URL into words
+    parts = re.split(r"[/:.?=&_-]+", url.lower())
+
+    for part in parts:
+
+        if part in keywords:
+            reasons.append(f"Suspicious keyword: {part}")
+
+        if any(ch.isdigit() for ch in part):
+            reasons.append(f"Digits found: {part}")
+
+        if len(part) > 20:
+            reasons.append(f"Long token: {part}")
+
+    # Whole URL checks
     if len(url) > 72:
-        score += 1
         reasons.append("Long URL")
 
-    # digits check
-    if any(ch.isdigit() for ch in url):
-        score += 1
-        reasons.append("Digits in URL")
+    if url.count("-") > 2:
+        reasons.append("Too many hyphens")
 
-    # keyword check
-    for word in keywords:
-        if word in url.lower():
-            score += 1
-            reasons.append(f"Keyword found: {word}")
-            break
-
-    # subdomain check
     if url.count(".") > 3:
-        score += 1
         reasons.append("Too many subdomains")
 
-    # IP address check
     if re.search(r"(\d+\.){3}\d+", url):
-        score += 1
         reasons.append("IP address used")
 
-    # file check
     path = urlparse(url).path
-    if "." in path.split("/")[-1]:
-        score += 1
+    last = path.split("/")[-1]
+
+    if "." in last:
         reasons.append("File in URL")
 
-    if score >= 3:
+    if reasons:
         result = "🚨 Phishing URL"
     else:
         result = "✅ Safe URL"
@@ -63,15 +63,13 @@ def home():
     if request.method == "POST":
         url = request.form["url"]
 
-        try:
-            r = requests.get(url, timeout=5)
-        except:
-            result = "❌ Website not reachable"
-            return render_template("index.html", result=result)
-
         result, reasons = check_url(url)
 
-    return render_template("index.html", result=result, reasons=reasons)
+    return render_template(
+        "index.html",
+        result=result,
+        reasons=reasons
+    )
 
 
 if __name__ == "__main__":
