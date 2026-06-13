@@ -1,120 +1,76 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Phishing URL Detector</title>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #1e3c72, #2a5298);
-        margin: 0;
-        padding: 0;
-        color: white;
-        text-align: center;
-    }
-
-    .container {
-        margin-top: 80px;
-    }
-
-    h1 {
-        font-size: 36px;
-        margin-bottom: 10px;
-    }
-
-    p {
-        font-size: 16px;
-        opacity: 0.9;
-    }
-
-    .box {
-        background: white;
-        color: black;
-        width: 50%;
-        margin: auto;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0px 10px 25px rgba(0,0,0,0.3);
-        margin-top: 30px;
-    }
-
-    input {
-        width: 80%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-    }
-
-    button {
-        margin-top: 15px;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 8px;
-        background: #2a5298;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #1e3c72;
-    }
-
-    .result {
-        margin-top: 20px;
-        padding: 15px;
-        border-radius: 10px;
-        font-weight: bold;
-    }
-
-    .safe {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .phishing {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    ul {
-        text-align: left;
-        margin-top: 15px;
-    }
-</style>
+    <title>URL Phishing Checker</title>
+    <style>
+        body { font-family: Arial; max-width: 700px; margin: 50px auto; padding: 20px; }
+        input[type=text] { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .phish { background: #ffebee; border: 2px solid #ef5350; }
+        .safe { background: #e8f5e9; border: 2px solid #66bb6a; }
+        .reason { color: #555; font-size: 14px; margin: 4px 0; padding: 2px 0; }
+        .signal { color: #c62828; font-size: 14px; margin: 4px 0; }
+        .info { color: #2e7d32; font-size: 14px; margin: 4px 0; }
+        .warning { color: #e65100; font-size: 14px; margin: 4px 0; }
+        h1 { color: #333; }
+        .example { color: #888; font-size: 13px; margin-top: 5px; }
+        hr { margin: 30px 0; }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-    <h1>🔍 Phishing URL Detector</h1>
-    <p>Enter a URL to check whether it is safe or malicious</p>
-
-    <div class="box">
-        <form method="POST">
-            <input type="text" name="url" placeholder="Enter URL (https://...)" required>
-            <br>
-            <button type="submit">Check URL</button>
-        </form>
-
-        {% if result %}
-            <div class="result 
-                {% if 'Phishing' in result %}phishing{% else %}safe{% endif %}">
-                {{ result }}
+    <h1>🔍 URL Phishing Checker</h1>
+    <form method="POST" id="urlForm">
+        <input type="text" name="url" placeholder="Enter URL to check..." id="urlInput" value="{{ url }}">
+        <br><br>
+        <button type="submit">Check URL</button>
+        <div class="example" id="examples">Examples: https://google.com, https://login-secure-bank.com</div>
+    </form>
+    
+    {% if result %}
+        {% if 'Phishing' in result %}
+            <div class="result phish">
+                <h2>{{ result }}</h2>
+                {% for reason in reasons %}
+                    {% if reason.startswith('⚠️') %}
+                        <p class="warning">{{ reason }}</p>
+                    {% elif reason.startswith('✓') %}
+                        <p class="info">{{ reason }}</p>
+                    {% else %}
+                        <p class="signal">{{ reason }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% elif 'Safe' in result %}
+            <div class="result safe">
+                <h2>{{ result }}</h2>
+                {% for reason in reasons %}
+                    {% if reason.startswith('⚠️') %}
+                        <p class="warning">{{ reason }}</p>
+                    {% elif reason.startswith('✓') %}
+                        <p class="info">{{ reason }}</p>
+                    {% else %}
+                        <p class="reason">{{ reason }}</p>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% endif %}
-
-        {% if reasons %}
-            <ul>
-                {% for r in reasons %}
-                    <li>{{ r }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-</div>
-
+    {% endif %}
+    
+    <script>
+        // Hide examples when form is submitted
+        document.getElementById('urlForm').addEventListener('submit', function() {
+            document.getElementById('examples').style.display = 'none';
+        });
+        
+        // Also hide examples on page load if there's a result already
+        window.addEventListener('DOMContentLoaded', function() {
+            var resultDiv = document.querySelector('.result');
+            if (resultDiv) {
+                document.getElementById('examples').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
