@@ -1,53 +1,57 @@
-# 🔍 Phishing URL Detection System
+# 🔍 Smart Phishing URL Detection System
 
-A simple web application built using **Flask (Python)** that detects whether a URL is phishing or safe using rule-based security analysis.
+A Flask-based web application that detects potentially malicious URLs using rule-based heuristic analysis.
 
-This project does **not use machine learning**. Instead, it relies on predefined heuristic rules such as URL patterns, suspicious keywords, and structural checks to identify potentially malicious URLs.
+The system examines various URL characteristics and security indicators to classify URLs as safe or suspicious without using machine learning.
 
 ---
 
 ## 🚀 Project Overview
 
-The system analyzes a given URL and determines whether it is safe or suspicious based on multiple security indicators.
+The application analyzes a submitted URL and generates a verdict based on multiple phishing detection checks.
 
-### Detection Factors
-
-* URL length
-* Presence of digits
-* Suspicious keywords (login, bank, verify, secure, etc.)
-* Subdomain count
-* IP address usage
-* File-based URL patterns
-* Website reachability
-
-Based on these checks, the application classifies the URL as:
+### Possible Results
 
 * ✅ Safe URL
 * 🚨 Phishing URL
-* ❌ Website Not Reachable
+* 🚨 Critical Phishing URL
 
 ---
 
 ## 🧠 How It Works
 
-1. User opens the web application.
-2. A URL is entered into the input field.
-3. The **Check** button is clicked.
-4. Flask processes the request.
-5. Rule-based logic analyzes the URL.
-6. The result and detection reasons are displayed.
+1. User enters a URL.
+2. Flask processes the request.
+3. The URL is analyzed using multiple security checks.
+4. Detection signals are collected.
+5. A verdict and explanation are displayed.
 
 ---
 
 ## ✨ Features
 
-* Real-time URL analysis
 * Rule-based phishing detection
-* Suspicious keyword detection
+* Domain structure analysis
+* Suspicious URL pattern detection
+* Brand impersonation detection
 * IP address detection
-* Website availability checking
+* Subdomain analysis
+* URL path inspection
+* Suspicious TLD detection
+* Tunnel/proxy domain detection
+* Website reachability checking
+* Detailed detection explanations
 * Simple and user-friendly interface
-* Lightweight and easy to deploy
+
+---
+
+## 🛠 Technologies Used
+
+* Python
+* Flask
+* Requests
+* Regular Expressions 
+* urllib.parse
 
 ---
 
