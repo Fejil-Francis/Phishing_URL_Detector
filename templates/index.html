@@ -9,9 +9,12 @@
         button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
         .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
         .phish { background: #ffebee; border: 2px solid #ef5350; }
+        .critical { background: #ffebee; border: 2px solid #b71c1c; }
         .safe { background: #e8f5e9; border: 2px solid #66bb6a; }
+        .unreachable { background: #fff3e0; border: 2px solid #ff9800; }
         .reason { color: #555; font-size: 14px; margin: 4px 0; padding: 2px 0; }
         .signal { color: #c62828; font-size: 14px; margin: 4px 0; }
+        .critical-signal { color: #b71c1c; font-size: 14px; margin: 4px 0; font-weight: bold; }
         .info { color: #2e7d32; font-size: 14px; margin: 4px 0; }
         .warning { color: #e65100; font-size: 14px; margin: 4px 0; }
         h1 { color: #333; }
@@ -29,7 +32,22 @@
     </form>
     
     {% if result %}
-        {% if 'Phishing' in result %}
+        {% if 'CRITICAL' in result %}
+            <div class="result critical">
+                <h2>{{ result }}</h2>
+                {% for reason in reasons %}
+                    {% if reason.startswith('⚠️') %}
+                        <p class="warning">{{ reason }}</p>
+                    {% elif reason.startswith('✓') %}
+                        <p class="info">{{ reason }}</p>
+                    {% elif reason.startswith('CRITICAL') %}
+                        <p class="critical-signal">{{ reason }}</p>
+                    {% else %}
+                        <p class="signal">{{ reason }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% elif 'Phishing' in result %}
             <div class="result phish">
                 <h2>{{ result }}</h2>
                 {% for reason in reasons %}
@@ -39,6 +57,19 @@
                         <p class="info">{{ reason }}</p>
                     {% else %}
                         <p class="signal">{{ reason }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% elif 'not reachable' in result %}
+            <div class="result unreachable">
+                <h2>{{ result }}</h2>
+                {% for reason in reasons %}
+                    {% if reason.startswith('⚠️') %}
+                        <p class="warning">{{ reason }}</p>
+                    {% elif reason.startswith('✓') %}
+                        <p class="info">{{ reason }}</p>
+                    {% else %}
+                        <p class="reason">{{ reason }}</p>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -59,12 +90,10 @@
     {% endif %}
     
     <script>
-        // Hide examples when form is submitted
         document.getElementById('urlForm').addEventListener('submit', function() {
             document.getElementById('examples').style.display = 'none';
         });
         
-        // Also hide examples on page load if there's a result already
         window.addEventListener('DOMContentLoaded', function() {
             var resultDiv = document.querySelector('.result');
             if (resultDiv) {
