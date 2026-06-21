@@ -77,6 +77,8 @@ Start the Flask server:
 ```bash
 python3 phish.py
 ```
+<img width="704" height="274" alt="Screenshot 2026-06-19 204116" src="https://github.com/user-attachments/assets/1f95f222-73b8-417f-a63e-9a95da40cdb5" />
+
 ---
 ## 📜 License
 
